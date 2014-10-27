@@ -1,0 +1,4 @@
+name = hreflang
+core = 7.x
+description = Adds an hreflang link element to header of each page.
+package = Multilingual

@@ -1,0 +1,38 @@
+<?php
+
+/**
+ * Implements hook_page_build().
+ */
+function hreflang_page_build(&$page) {
+  // Return early if site is monolingual.
+  if (!drupal_multilingual()) {
+    return;
+  }
+  // No need to add hreflang tags for 404/403 pages.
+  $headers = drupal_get_http_header();
+  if (isset($headers['status']) && ($headers['status'] == '404 Not Found' || $headers['status'] == '403 Forbidden')) {
+    return;
+  }
+  $path = drupal_is_front_page() ? '' : $_GET['q'];
+  $links = language_negotiation_get_switch_links(LANGUAGE_TYPE_INTERFACE, $path);
+  if (empty($links->links)) {
+    return;
+  }
+  foreach ($links->links as $langcode => $link) {
+    $attributes = array(
+      'href' => url($link['href'], array('absolute' => TRUE, 'language' => $link['language'], 'query' => drupal_get_query_parameters())),
+      'rel' => 'alternate',
+      'hreflang' => $langcode,
+    );
+    drupal_add_html_head_link($attributes);
+  }
+}
+
+/**
+ * Implements hook_language_switch_links_alter().
+ */
+function hreflang_language_switch_links_alter(array &$links, $type, $path) {
+  foreach ($links as $langcode => &$link) {
+    $link['attributes']['hreflang'] = $langcode;
+  }
+}
