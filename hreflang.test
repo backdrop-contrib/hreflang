@@ -1,0 +1,48 @@
+<?php
+
+/**
+ * Functional tests for Alternate hreflang.
+ */
+class HreflangTest extends DrupalWebTestCase {
+  public static function getInfo() {
+    return array(
+      'name' => 'Alternate hreflang',
+      'description' => 'Tests for presence of the hreflang link element.',
+      'group' => 'Alternate hreflang',
+    );
+  }
+
+  function setUp() {
+    parent::setUp('locale', 'hreflang');
+  }
+
+  /**
+   * Functional tests for adding, editing and deleting languages.
+   */
+  function testHreflangMarkup() {
+    global $base_url;
+
+    // User to add and remove language.
+    $admin_user = $this->drupalCreateUser(array('administer languages', 'access administration pages'));
+    $this->drupalLogin($admin_user);
+
+    // Add predefined language.
+    $edit = array('langcode' => 'fr');
+    $this->drupalPost('admin/config/regional/language/add', $edit, t('Add language'));
+
+    // Enable language detection.
+    $edit = array('language[enabled][locale-url]' => 1);
+    $this->drupalPost('admin/config/regional/language/configure', $edit, t('Save settings'));
+
+    $url = $base_url . '/';
+    $path = variable_get('clean_url', 0) ? 'fr' : '?q=fr';
+
+    $this->drupalGet('');
+    $this->assertRaw('<link href="' . $url . $path . '" rel="alternate" hreflang="fr" />', 'French hreflang found on English page.');
+    $this->assertRaw('<link href="' . $url . '" rel="alternate" hreflang="en" />', 'English hreflang found on English page.');
+
+    $this->drupalGet('fr');
+    $this->assertRaw('<link href="' . $url . $path . '" rel="alternate" hreflang="fr" />', 'French hreflang found on French page.');
+    $this->assertRaw('<link href="' . $url . '" rel="alternate" hreflang="en" />', 'English hreflang found on French page.');
+  }
+}

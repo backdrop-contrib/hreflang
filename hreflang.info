@@ -2,3 +2,4 @@ name = Alternate hreflang
 core = 7.x
 description = Adds hreflang link elements to the header of each page.
 package = Multilingual
+files[] = hreflang.test
