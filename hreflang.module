@@ -9,8 +9,8 @@ function hreflang_page_build(&$page) {
     return;
   }
   // No need to add hreflang tags for 404/403 pages.
-  $headers = drupal_get_http_header();
-  if (isset($headers['status']) && ($headers['status'] == '404 Not Found' || $headers['status'] == '403 Forbidden')) {
+  $status = drupal_get_http_header('status');
+  if ($status == '404 Not Found' || $status == '403 Forbidden') {
     return;
   }
   $path = drupal_is_front_page() ? '' : $_GET['q'];
