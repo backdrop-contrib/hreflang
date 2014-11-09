@@ -19,6 +19,10 @@ function hreflang_page_build(&$page) {
     return;
   }
   foreach ($links->links as $langcode => $link) {
+    // Content translation module may unset the href attribute.
+    if (!isset($link['href'])) {
+      continue;
+    }
     $attributes = array(
       'href' => url($link['href'], array('absolute' => TRUE, 'language' => $link['language'], 'query' => drupal_get_query_parameters())),
       'rel' => 'alternate',
