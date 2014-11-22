@@ -1,42 +1,30 @@
 <?php
 
+use Drupal\Core\Language\LanguageInterface;
+use Drupal\Core\Url;
+
 /**
- * Implements hook_page_build().
+ * Implements hook_page_attachments().
  */
-function hreflang_page_build(&$page) {
-  // Return early if site is monolingual.
-  if (!drupal_multilingual()) {
-    return;
-  }
+function hreflang_page_attachments(array &$page) {
   // No need to add hreflang tags for 404/403 pages.
-  $status = drupal_get_http_header('status');
-  if ($status == '404 Not Found' || $status == '403 Forbidden') {
+  if (\Drupal::request()->attributes->get('exception')) {
     return;
   }
-  $path = drupal_is_front_page() ? '' : $_GET['q'];
-  $links = language_negotiation_get_switch_links(LANGUAGE_TYPE_INTERFACE, $path);
+  $language_manager = \Drupal::getContainer()->get('language_manager');
+  $route = drupal_is_front_page() ? '<front>' : '<current>';
+  $links = $language_manager->getLanguageSwitchLinks(LanguageInterface::TYPE_INTERFACE, Url::fromRoute($route));
   if (empty($links->links)) {
     return;
   }
   foreach ($links->links as $langcode => $link) {
-    // Content translation module may unset the href attribute.
-    if (!isset($link['href'])) {
-      continue;
-    }
-    $attributes = array(
-      'href' => url($link['href'], array('absolute' => TRUE, 'language' => $link['language'], 'query' => drupal_get_query_parameters())),
+    $link['url']->setAbsolute();
+    $link['url']->setOption('language', $link['language']);
+    $link['url']->setOption('query', \Drupal::request()->query->all());
+    $page['#attached']['html_head_link'][] = array(array(
+      'href' => $link['url']->toString(),
       'rel' => 'alternate',
       'hreflang' => $langcode,
-    );
-    drupal_add_html_head_link($attributes);
-  }
-}
-
-/**
- * Implements hook_language_switch_links_alter().
- */
-function hreflang_language_switch_links_alter(array &$links, $type, $path) {
-  foreach ($links as $langcode => &$link) {
-    $link['attributes']['hreflang'] = $langcode;
+    ));
   }
 }
