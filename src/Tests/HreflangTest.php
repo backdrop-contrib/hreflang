@@ -35,10 +35,10 @@ class HreflangTest extends WebTestBase {
     );
     $this->drupalPostForm('admin/config/regional/language/add', $edit, 'Add language');
     $this->drupalGet('user/2');
-    $this->assertRaw('<link href="' . $base_url . '/fr/user/2" rel="alternate" hreflang="fr" />', 'French hreflang found on English page.');
-    $this->assertRaw('<link href="' . $base_url . '/user/2" rel="alternate" hreflang="en" />', 'English hreflang found on English page.');
+    $this->assertRaw('<link rel="alternate" hreflang="fr" href="' . $base_url . '/fr/user/2" />', 'French hreflang found on English page.');
+    $this->assertRaw('<link rel="alternate" hreflang="en" href="' . $base_url . '/user/2" />', 'English hreflang found on English page.');
     $this->drupalGet('fr/user/2');
-    $this->assertRaw('<link href="' . $base_url . '/fr/user/2" rel="alternate" hreflang="fr" />', 'French hreflang found on French page.');
-    $this->assertRaw('<link href="' . $base_url . '/user/2" rel="alternate" hreflang="en" />', 'English hreflang found on French page.');
+    $this->assertRaw('<link rel="alternate" hreflang="fr" href="' . $base_url . '/fr/user/2" />', 'French hreflang found on French page.');
+    $this->assertRaw('<link rel="alternate" hreflang="en" href="' . $base_url . '/user/2" />', 'English hreflang found on French page.');
   }
 }
