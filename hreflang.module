@@ -22,9 +22,9 @@ function hreflang_page_attachments(array &$page) {
     $link['url']->setOption('language', $link['language']);
     $link['url']->setOption('query', \Drupal::request()->query->all());
     $page['#attached']['html_head_link'][] = array(array(
-      'href' => $link['url']->toString(),
       'rel' => 'alternate',
       'hreflang' => $langcode,
+      'href' => $link['url']->toString(),
     ));
   }
 }
