@@ -21,10 +21,13 @@ function hreflang_page_attachments(array &$page) {
     $link['url']->setAbsolute();
     $link['url']->setOption('language', $link['language']);
     $link['url']->setOption('query', \Drupal::request()->query->all());
-    $page['#attached']['html_head_link'][] = array(array(
-      'rel' => 'alternate',
-      'hreflang' => $langcode,
-      'href' => $link['url']->toString(),
-    ));
+    $page['#attached']['html_head_link'][] = [
+      [
+        'rel' => 'alternate',
+        'hreflang' => $langcode,
+        'href' => $link['url']->toString(),
+      ],
+      TRUE,
+    ];
   }
 }
