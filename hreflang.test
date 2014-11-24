@@ -14,24 +14,24 @@ class HreflangTest extends DrupalWebTestCase {
 
   function setUp() {
     parent::setUp('hreflang', 'locale');
-  }
-
-  /**
-   * Test that hreflang link tags are added.
-   */
-  function testHreflangMarkup() {
-    global $base_url;
 
     // User to add language.
-    $admin_user = $this->drupalCreateUser(array(
+    $this->adminUser = $this->drupalCreateUser(array(
       'access administration pages',
       'administer languages',
     ));
-    $this->drupalLogin($admin_user);
+    $this->drupalLogin($this->adminUser);
 
     // Add predefined language.
     $edit = array('langcode' => 'fr');
     $this->drupalPost('admin/config/regional/language/add', $edit, t('Add language'));
+  }
+
+  /**
+   * Test that hreflang link tags are added with URL detection.
+   */
+  function testHreflangMarkup() {
+    global $base_url;
 
     // Enable language detection.
     $edit = array('language[enabled][locale-url]' => 1);
@@ -47,6 +47,33 @@ class HreflangTest extends DrupalWebTestCase {
     $this->drupalGet('fr');
     $this->assertRaw('<link href="' . $url . $path . '" rel="alternate" hreflang="fr" />', 'French hreflang found on French page.');
     $this->assertRaw('<link href="' . $url . '" rel="alternate" hreflang="en" />', 'English hreflang found on French page.');
+  }
+
+  /**
+   * Test that hreflang link tags are added with session detection.
+   */
+  function testHreflangMarkupSession() {
+    global $base_url;
+
+    // Enable language detection.
+    $edit = array('language[enabled][locale-session]' => 1);
+    $this->drupalPost('admin/config/regional/language/configure', $edit, t('Save settings'));
+
+    $url = $base_url . '/';
+    $french = '?language=fr';
+    $english = '?language=en';
+
+    $this->drupalGet('');
+    $this->assertRaw('<link href="' . $url . $french . '" rel="alternate" hreflang="fr" />', 'French hreflang found on default page.');
+    $this->assertRaw('<link href="' . $url . '" rel="alternate" hreflang="en" />', 'English hreflang found on default page.');
+
+    $this->drupalGet('', array('query' => array('language' => 'en')));
+    $this->assertRaw('<link href="' . $url . $french . '" rel="alternate" hreflang="fr" />', 'French hreflang found on English page.');
+    $this->assertRaw('<link href="' . $url . $english . '" rel="alternate" hreflang="en" />', 'English hreflang found on English page.');
+
+    $this->drupalGet('', array('query' => array('language' => 'fr')));
+    $this->assertRaw('<link href="' . $url . $french . '" rel="alternate" hreflang="fr" />', 'French hreflang found on French page.');
+    $this->assertRaw('<link href="' . $url . $english . '" rel="alternate" hreflang="en" />', 'English hreflang found on French page.');
   }
 }
 
