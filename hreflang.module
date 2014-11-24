@@ -23,8 +23,13 @@ function hreflang_page_build(&$page) {
     if (!isset($link['href'])) {
       continue;
     }
+    $link['absolute'] = TRUE;
+    if (!isset($link['query'])) {
+      $link['query'] = array();
+    }
+    $link['query'] += drupal_get_query_parameters();
     $attributes = array(
-      'href' => url($link['href'], array('absolute' => TRUE, 'language' => $link['language'], 'query' => drupal_get_query_parameters())),
+      'href' => url($link['href'], $link),
       'rel' => 'alternate',
       'hreflang' => $langcode,
     );
