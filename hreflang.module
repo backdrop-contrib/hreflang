@@ -12,7 +12,7 @@ function hreflang_page_attachments(array &$page) {
     return;
   }
   $language_manager = \Drupal::getContainer()->get('language_manager');
-  $route = drupal_is_front_page() ? '<front>' : '<current>';
+  $route = \Drupal::service('path.matcher')->isFrontPage() ? '<front>' : '<current>';
   $links = $language_manager->getLanguageSwitchLinks(LanguageInterface::TYPE_INTERFACE, Url::fromRoute($route));
   if (empty($links->links)) {
     return;
