@@ -8,7 +8,7 @@ use Drupal\Core\Url;
  */
 function hreflang_page_attachments(array &$page) {
   // No need to add hreflang tags for 404/403 pages.
-  if (\Drupal::request()->attributes->get('exception')) {
+  if (\Drupal::request()->attributes->has('exception')) {
     return;
   }
   $language_manager = \Drupal::getContainer()->get('language_manager');
