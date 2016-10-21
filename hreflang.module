@@ -31,7 +31,7 @@ function hreflang_page_build(&$page) {
     $attributes = array(
       'href' => url($link['href'], $link),
       'rel' => 'alternate',
-      'hreflang' => $langcode,
+      'hreflang' => $link['attributes']['hreflang'],
     );
     drupal_add_html_head_link($attributes);
   }
