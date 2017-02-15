@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * Adds hreflang link elements to the header of each page.
+ */
+
+/**
  * Implements hook_page_build().
  */
 function hreflang_page_build(&$page) {
