@@ -6,47 +6,48 @@
  */
 
 /**
- * Implements hook_page_build().
+ * template_preprocess_layout().
  */
-function hreflang_page_build(&$page) {
-  // Return early if site is monolingual.
-  if (!drupal_multilingual()) {
-    return;
-  }
-  // No need to add hreflang tags for 404/403 pages.
-  $status = drupal_get_http_header('status');
-  if ($status == '404 Not Found' || $status == '403 Forbidden') {
-    return;
-  }
-  $path = drupal_is_front_page() ? '' : $_GET['q'];
-  $links = language_negotiation_get_switch_links(LANGUAGE_TYPE_INTERFACE, $path);
-  if (empty($links->links)) {
-    return;
-  }
-  foreach ($links->links as $langcode => $link) {
-    // Content translation module may unset the href attribute.
-    if (!isset($link['href'])) {
-      continue;
+function hreflang_preprocess_layout(&$variables)
+{
+    // Return early if site is monolingual.
+    if (!language_multilingual()) {
+        return;
     }
-    $link['absolute'] = TRUE;
-    if (!isset($link['query'])) {
-      $link['query'] = array();
+    // No need to add hreflang tags for 404/403 pages.
+    $status = backdrop_get_http_header('status');
+    if ($status == '404 Not Found' || $status == '403 Forbidden') {
+        return;
     }
-    $link['query'] += drupal_get_query_parameters();
-    $attributes = array(
-      'href' => url($link['href'], $link),
-      'rel' => 'alternate',
-      'hreflang' => $link['attributes']['hreflang'],
-    );
-    drupal_add_html_head_link($attributes);
-  }
+    $path = backdrop_is_front_page() ? '' : $_GET['q'];
+    $links = language_negotiation_get_switch_links(LANGUAGE_TYPE_INTERFACE, $path);
+    if (empty($links->links)) {
+        return;
+    }
+    foreach ($links->links as $langcode => $link) {
+        // Content translation module may unset the href attribute.
+        if (!isset($link['href'])) {
+            continue;
+        }
+        $link['absolute'] = TRUE;
+        if (!isset($link['query'])) {
+            $link['query'] = array();
+        }
+        $link['query'] += backdrop_get_query_parameters();
+        $attributes = array(
+            'href' => url($link['href'], $link),
+            'rel' => 'alternate',
+            'hreflang' => $langcode,
+        );
+        backdrop_add_html_head_link($attributes);
+    }
 }
 
 /**
  * Implements hook_language_switch_links_alter().
  */
 function hreflang_language_switch_links_alter(array &$links, $type, $path) {
-  foreach ($links as $langcode => &$link) {
-    $link['attributes']['hreflang'] = $langcode;
-  }
+    foreach ($links as $langcode => &$link) {
+        $link['attributes']['hreflang'] = $langcode;
+    }
 }

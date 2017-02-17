@@ -1,0 +1,11 @@
+[HreflangTest]
+name = Alternate hreflang
+description = Tests for presence of the hreflang link element.
+group = Alternate hreflang
+file = hreflang.test
+
+[HreflangContentTranslationTest]
+name = Alternate hreflang with Content translation
+description = Tests for presence of the hreflang link element on translated nodes.
+group = Alternate hreflang
+file = hreflang.test

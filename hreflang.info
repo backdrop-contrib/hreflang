@@ -1,5 +1,9 @@
 name = Alternate hreflang
-core = 7.x
+backdrop = 1.x
 description = Adds hreflang link elements to the header of each page.
 package = Multilingual
+dependencies[] = locale
+dependencies[] = translation
+dependencies[] = layout
 files[] = hreflang.test
+version = BACKDROP_VERSION
