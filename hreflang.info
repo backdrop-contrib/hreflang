@@ -7,3 +7,5 @@ dependencies[] = translation
 dependencies[] = layout
 files[] = hreflang.test
 version = BACKDROP_VERSION
+type = module
+
